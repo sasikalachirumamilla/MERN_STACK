@@ -20,4 +20,23 @@ app.use(bodyParser.json({limit:"30mb", extended:true}));
 app.use(body-parseArgs.urlencoded({limit:"30mb", extended:true}));
 app.use(cors());
 app.use("/assets",express.static(path.join(__dirname,'public/assets')));
-
+/*File Storage*/
+const Storage = multer.diskStorage({
+    destination:function(req,file,cb){
+        cb(null,"public/assets");
+    },
+    filename:function(req,file,cb){
+    cb(null,file.originalname);
+    }
+});
+const upload=multer({storage});
+/*MONGOOSE SETUP*/
+const PORT=process.env.PORT || 6001;
+mongoose
+    .connect(process.env.MONGO_URL,{
+    useNewUrlParse:true,
+    useUnifiedTopology:true,
+}).then(() =>{
+    app.listen(PORT,()=>console.log('Server Port: ${PORT}'));
+})
+.catch((error) =>console.log('${error} did not connect'));
